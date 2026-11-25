@@ -270,10 +270,57 @@
       .tl-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
       .tl-head b{ font-size:16.5px; font-weight:800; }
       .tl-head .checkline{ padding:2px; min-height:36px; font-size:14px; }
-      .tl-ruler{ height:8px; margin:10px 0 4px; opacity:.65; background:repeating-linear-gradient(to left, var(--line) 0, var(--line) 1.5px, transparent 1.5px, transparent 12.5%); }
-      .tl-stripwrap{ position:relative; }
-      .tl-strip{ display:flex; gap:3px; height:78px; border-radius:10px; overflow:hidden; background:var(--surface2); border:1.5px solid var(--line); padding:3px; }
-      .tl-seg{ position:relative; min-width:36px; overflow:hidden; border-radius:7px; background:#0a1f16; }
+      /* محرّر المسارات: مسطرة زمنية + مسار صوت + مسار فيديو/صور */
+      .tl-ed{ display:flex; gap:8px; margin-top:12px; }
+      .tl-labs{ flex:none; width:76px; display:flex; flex-direction:column; gap:6px; }
+      .tl-lab{ display:flex; align-items:center; font-size:12.5px; font-weight:800; color:var(--muted); line-height:1.35; }
+      .tl-lab-ruler{ height:24px; }
+      .tl-lab-au{ height:56px; color:var(--gold); }
+      .tl-lab-vid{ height:88px; color:var(--accent); }
+      .tl-lanes{ position:relative; flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:6px; touch-action:pan-y; user-select:none; -webkit-user-select:none; }
+      .tl-ruler2{ position:relative; height:24px; border-bottom:1.5px solid var(--line); }
+      .tl-tick{ position:absolute; bottom:0; transform:translateX(50%); font-size:10.5px; font-weight:700; color:var(--muted); white-space:nowrap; }
+      .tl-tick::after{ content:""; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); width:1.5px; height:6px; background:var(--line); }
+      .tl-lane{ position:relative; border-radius:10px; background:var(--surface2); border:1.5px solid var(--line); overflow:hidden; }
+      .tl-lane-au{ height:56px; }
+      .tl-lane-vid{ height:88px; display:flex; gap:3px; padding:3px; }
+      .tl-lane-empty{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13px; font-weight:700; text-align:center; padding:0 10px; }
+      .tl-au-block{ position:relative; height:100%; border-radius:8px; overflow:hidden; background:linear-gradient(160deg,#14532d,#052a13); box-shadow:inset 0 0 0 1.5px rgba(243,217,139,.35); }
+      .tl-au-block canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+      .tl-au-meta{ position:absolute; inset-inline:0; bottom:0; display:flex; align-items:center; gap:8px; background:rgba(0,0,0,.55); color:#fff; font-size:11.5px; font-weight:700; padding:2px 8px; white-space:nowrap; overflow:hidden; }
+      .tl-au-meta .au-dur{ color:var(--gold-soft); font-weight:800; flex:none; }
+      .tl-au-ph{ position:absolute; inset:3px; border:1.5px dashed var(--line); border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:12.5px; font-weight:700; text-align:center; padding:0 12px; }
+      .tl-seg{ position:relative; min-width:34px; overflow:hidden; border-radius:7px; background:#0a1f16; flex:none; cursor:grab; touch-action:pan-y; }
+      .tl-seg.ghost{ opacity:.32; pointer-events:none; box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5); }
+      .tl-seg.sel{ box-shadow:inset 0 0 0 3px var(--gold); }
+      .tl-seg.drag{ cursor:grabbing; z-index:6; box-shadow:0 10px 24px rgba(0,0,0,.4), inset 0 0 0 3px var(--gold); }
+      .tl-seg > img, .tl-seg .seg-vid, .tl-seg .seg-lbl, .tl-seg .seg-type, .tl-seg .vid-ic{ pointer-events:none; }
+      .seg-h{ position:absolute; top:0; bottom:0; width:15px; z-index:4; cursor:ew-resize; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .15s ease; touch-action:none; }
+      .seg-h::after{ content:""; width:4px; height:28px; border-radius:2px; background:rgba(255,255,255,.9); box-shadow:0 0 0 1.5px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.4); }
+      .seg-h.start{ inset-inline-start:0; }
+      .seg-h.end{ inset-inline-end:0; }
+      .tl-seg:hover .seg-h, .tl-seg.sel .seg-h, .tl-seg.drag .seg-h{ opacity:1; }
+      .tl-play2{ position:absolute; top:0; bottom:0; width:3px; border-radius:2px; background:var(--gold2); box-shadow:0 0 9px rgba(217,169,44,.85); z-index:5; transform:translateX(50%); pointer-events:none; }
+      .tl-play2::before{ content:""; position:absolute; top:0; left:50%; transform:translateX(-50%) rotate(45deg); width:10px; height:10px; background:var(--gold2); border-radius:2px; }
+      .tl-posrow{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:8px; }
+      .tl-pos{ font-size:13px; font-weight:800; color:var(--accent); white-space:nowrap; }
+      .tl-gest{ font-size:12px; color:var(--muted); }
+      .tl-tools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--surface2); border:1.5px solid var(--gold); border-radius:12px; padding:7px 9px; margin-top:10px; }
+      .tl-tools .row-type{ flex:none; font-size:11px; font-weight:800; padding:3px 9px; border-radius:999px; }
+      .tl-tools .row-type.vid{ background:linear-gradient(135deg,#d4a017,#a97b06); color:#fff; }
+      .tl-tools .row-type.img{ background:var(--accent); color:var(--accent-ink); }
+      .tl-tools .tl-tool-nm{ flex:1 1 auto; min-width:80px; font-size:13.5px; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .tl-tools .tl-tool-dur{ display:flex; align-items:center; gap:5px; font-size:13px; font-weight:700; color:var(--muted); }
+      .tl-tools input[type="number"]{ width:62px; padding:6px 8px; font-size:14.5px; }
+      .tl-tools .mini{ min-height:38px; padding:6px 11px; border-radius:9px; border:1.5px solid var(--line); background:var(--surface); color:var(--ink); font-weight:800; cursor:pointer; font-size:13.5px; font-family:inherit; }
+      .tl-tools .mini:hover:not(:disabled){ border-color:var(--gold); }
+      .tl-tools .mini:disabled{ opacity:.35; cursor:not-allowed; }
+      .tl-tools .mini.del{ color:var(--danger); }
+      .tl-row.sel{ border-color:var(--gold); box-shadow:inset 0 0 0 1.5px var(--gold); }
+      @media (max-width:560px){
+        .tl-labs{ width:52px; }
+        .tl-lab{ font-size:11px; }
+      }
       .tl-seg img{ width:100%; height:100%; object-fit:cover; display:block; }
       .tl-seg .seg-vid{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg,#14532d,#052a13); color:var(--gold-soft); font-size:20px; }
       .tl-seg .seg-lbl{ position:absolute; inset-inline:0; bottom:0; background:rgba(0,0,0,.58); color:#fff; font-size:10.5px; font-weight:700; padding:2px 5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:"Tajawal",sans-serif; }
@@ -286,8 +333,6 @@
       .tl-row .row-type.img{ background:var(--accent); color:var(--accent-ink); }
       .tl-seg.on{ box-shadow:inset 0 0 0 2.5px var(--gold2); }
       .tl-empty{ flex:1; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:13.5px; font-weight:700; text-align:center; padding:0 10px; }
-      .tl-play{ position:absolute; top:-3px; bottom:-3px; width:3px; border-radius:2px; background:var(--gold2); box-shadow:0 0 9px rgba(217,169,44,.85); z-index:4; transform:translateX(50%); pointer-events:none; }
-      .tl-play::before{ content:""; position:absolute; top:0; left:50%; transform:translateX(-50%) rotate(45deg); width:9px; height:9px; background:var(--gold2); border-radius:2px; }
       .tl-info{ font-size:13px; color:var(--muted); margin-top:9px; min-height:20px; }
       .tl-actions{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
       .tl-actions .btn{ min-height:42px; padding:8px 13px; font-size:14px; flex:1 1 auto; }
@@ -302,7 +347,7 @@
       .tl-row .mini:hover:not(:disabled){ border-color:var(--gold); }
       .tl-row .mini:disabled{ opacity:.35; cursor:not-allowed; }
       .tl-row .mini.del{ color:var(--danger); }
-      .tl.off .tl-stripwrap, .tl.off .tl-list{ opacity:.45; }
+      .tl.off .tl-ed, .tl.off .tl-list{ opacity:.45; }
 
       /* ---------- خطة الأسبوع والنشر ---------- */
       .week{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
@@ -559,11 +604,32 @@
                 <b>خلفيات متسلسلة تتعاقب أثناء التلاوة</b>
                 <label class="checkline"><input type="checkbox" id="tlOn" /> تفعيل الشريط</label>
               </div>
-              <p class="hint" style="margin:6px 0 0">ضع صورة بجانب مقطع، ومقطعًا بجانب آخر: أضف مقاطع متتالية من الخلفيات الجاهزة أو من جهازك، وحدّد مدة كل مقطع — فتتعاقب على الشاشة أثناء التلاوة في المعاينة والفيديو المُصدَّر معًا. كل خلية على الشريط تعرض مصغّرة الخلفية نفسها — صورةً كانت أو بوستر المقطع — مع شارة نوعها.</p>
-              <div class="tl-ruler"></div>
-              <div class="tl-stripwrap">
-                <div class="tl-strip" id="tlStrip"></div>
-                <div class="tl-play" id="tlPlayhead" hidden></div>
+              <p class="hint" style="margin:6px 0 0">محرّر مسارات مثل برامج المونتاج: مسار «الصوت» يعرض تلاوتك ككتلة واحدة بموجتها الصوتية واسم مصدرها ومدتها، ومسار «الفيديو / الصور» تحته يعرض مقاطع الخلفيات متسلسلة بمصغّراتها وشارات نوعها — كل مقطع بعرض مدته على نفس المسطرة الزمنية. تحكّم مباشرة على الشريط نفسه: اسحب المؤشر الذهبي للتنقّل في المعاينة، واسحب أي مقطع أفقيًا لإعادة ترتيبه، واسحب حافّتيه لتمديده أو تقصيره، واضغطه لتظهر أدواته — وينعكس كل ذلك فورًا على المعاينة والفيديو المُصدَّر. عند فتح هذه الخطوة يمتلئ الشريط تلقائيًا من اختياراتك السابقة: مسار الصوت بتلاوة الآية المختارة بصوت القارئ المختار (أو صوتك المرفوع)، ومسار الفيديو بالخلفية المختارة صورةً كانت أو فيديو — وإن غيّرت الخلفية لاحقًا تحدّث المقطع التلقائي معها، ما لم تكن قد عدّلت التسلسل بنفسك.</p>
+              <div class="tl-ed" id="tlEd">
+                <div class="tl-labs" aria-hidden="true">
+                  <div class="tl-lab tl-lab-ruler"></div>
+                  <div class="tl-lab tl-lab-au">الصوت</div>
+                  <div class="tl-lab tl-lab-vid">الفيديو / الصور</div>
+                </div>
+                <div class="tl-lanes" id="tlLanes">
+                  <div class="tl-ruler2" id="tlRuler"></div>
+                  <div class="tl-lane tl-lane-au" id="tlAudioLane"></div>
+                  <div class="tl-lane tl-lane-vid" id="tlVideoLane"></div>
+                  <div class="tl-play2" id="tlPlay2"></div>
+                </div>
+              </div>
+              <div class="tl-posrow">
+                <span class="tl-pos" id="tlPos"></span>
+                <span class="tl-gest">اسحب المؤشر للتنقّل • اسحب المقطع لترتيبه • اسحب حافّتيه لتغيير مدته • اضغطه لأدواته</span>
+              </div>
+              <div class="tl-tools" id="tlTools" hidden>
+                <span class="row-type" id="tlToolType"></span>
+                <span class="tl-tool-nm" id="tlToolName"></span>
+                <label class="tl-tool-dur">المدة <input type="number" id="tlToolDur" min="1" max="600" /> ث</label>
+                <button type="button" class="mini" id="tlToolDup">⧉ تكرار</button>
+                <button type="button" class="mini" id="tlToolPrev" title="نقل المقطع إلى الأمام">‹</button>
+                <button type="button" class="mini" id="tlToolNext" title="نقل المقطع إلى الخلف">›</button>
+                <button type="button" class="mini del" id="tlToolDel">✕ حذف</button>
               </div>
               <div class="tl-info" id="tlInfo"></div>
               <div class="tl-actions">
@@ -833,6 +899,7 @@ function resetPreview(){
   if(S.texts.length) renderPreviewAyah(0);
   var spans=$("pvText").querySelectorAll(".w"); spans.forEach(function(s){ s.classList.remove("on"); });
   tlCurIdx=-1; tlCurClip=null; if(tlActive()) tlSync(0);
+  setPlayheadPos(0);
 }
 function tick(){
   if(!play.active) return;
@@ -840,6 +907,7 @@ function tick(){
   var td=totalDur();
   $("pvBar").style.width=Math.min(100, t/td*100)+"%";
   tlSync(t);
+  setPlayheadPos(t);
   if(play.mode==="rec"){ $("recProg").value=Math.min(100, t/td*100); }
   if(t >= S.total + GAP*(S.durations.length-1) && $("showEnd").checked){
     $("pvEnd").classList.add("show");
@@ -1226,8 +1294,9 @@ $("recBtn").addEventListener("click", async function(){
 /* ================= الشريط الزمني للخلفيات ================= */
 /* مقاطع متسلسلة (صور/فيديو) تتعاقب أثناء التلاوة: كل مقطع له مدة، والسلسلة
    تُكرَّر تلقائيًا حتى نهاية الصوت، وكل مقطع فيديو يُكرَّر داخل مكانه إن قصر عن مدته */
-var TL={clips:[]};
-var tlCurIdx=-1, tlCurClip=null;
+var TL={clips:[], auto:null, autoSig:"", touched:false};
+var tlAudioBusy=false;
+var tlCurIdx=-1, tlCurClip=null, tlSelClip=null;
 function tlActive(){ var c=$("tlOn"); return !!(c && c.checked && TL.clips.length); }
 function tlSeqDur(){ return TL.clips.reduce(function(s,c){ return s+Math.max(1, c.dur||5); },0); }
 function tlLocate(t){
@@ -1247,13 +1316,11 @@ function tlHideClipVideos(){
 function tlDeactivate(){
   var c=$("tlOn"); if(c) c.checked=false;
   tlHideClipVideos(); tlCurClip=null; tlCurIdx=-1;
-  var ph=$("tlPlayhead"); if(ph) ph.hidden=true;
   document.querySelectorAll(".tl-seg").forEach(function(s){ s.classList.remove("on"); });
   var box=$("tlBox"); if(box) box.classList.add("off");
 }
 function tlRestoreSingle(){
   tlHideClipVideos(); tlCurClip=null; tlCurIdx=-1;
-  var ph=$("tlPlayhead"); if(ph) ph.hidden=true;
   document.querySelectorAll(".tl-seg").forEach(function(s){ s.classList.remove("on"); });
   var pvV=$("pvVid"), pvB=$("pvBg");
   pvB.classList.remove("kb");
@@ -1322,12 +1389,10 @@ function seekClipVideo(clip, local){
 function tlSync(t){
   if(!tlActive()) return;
   var audioEnd=S.total + GAP*Math.max(0, S.durations.length-1);
-  var tt=S.total>0 ? Math.min(t, audioEnd) : 0;
+  var tt=S.total>0 ? Math.min(t, audioEnd) : t;
+  setPlayheadPos(t);
   var info=tlLocate(tt); if(!info) return;
   info.clip._lastLocal=info.local;
-  var seq=tlSeqDur();
-  var ph=$("tlPlayhead");
-  if(ph){ ph.hidden=false; ph.style.insetInlineStart=(seq>0 ? (tt%seq)/seq*100 : 0)+"%"; }
   if(info.clip===tlCurClip && info.index===tlCurIdx){
     if(info.clip.kind==="video") seekClipVideo(info.clip, info.local);
     return;
@@ -1353,17 +1418,55 @@ function tlSync(t){
 }
 function tlThumbSrc(c){ return c.kind==="img" ? c.src : (c.poster||null); }
 function tlRender(){
-  var strip=$("tlStrip"); if(!strip) return;
-  strip.innerHTML="";
+  var lane=$("tlVideoLane"); if(!lane) return;
+  var seq=tlSeqDur();
+  var audioEnd=S.total>0 ? S.total + GAP*Math.max(0,S.durations.length-1) : 0;
+  var sc=Math.max(audioEnd, seq); if(!(sc>0)) sc=10;
+  /* المسطرة الزمنية بأرقام الثواني */
+  var ruler=$("tlRuler"); ruler.innerHTML="";
+  var steps=[1,2,5,10,15,20,30,60,120,300], step=steps[steps.length-1], si2;
+  for(si2=0;si2<steps.length;si2++){ if(sc/steps[si2]<=12){ step=steps[si2]; break; } }
+  for(var sv=0; sv<=sc+0.001; sv+=step){
+    var tk=document.createElement("span"); tk.className="tl-tick";
+    tk.style.insetInlineStart=(sv/sc*100)+"%";
+    if(sv===0) tk.style.transform="translateX(0)";
+    else if(sv>=sc) tk.style.transform="translateX(100%)";
+    tk.textContent=fmtTick(sv);
+    ruler.appendChild(tk);
+  }
+  /* مسار الصوت: كتلة واحدة بعرض مدة التلاوة وموجتها واسم مصدرها */
+  var auLane=$("tlAudioLane"); auLane.innerHTML="";
+  if(S.total>0){
+    var blk=document.createElement("div"); blk.className="tl-au-block";
+    blk.style.width=Math.max(3, Math.min(100, audioEnd/sc*100))+"%";
+    var cv=document.createElement("canvas"); cv.setAttribute("aria-hidden","true"); blk.appendChild(cv);
+    var meta=document.createElement("div"); meta.className="tl-au-meta";
+    var anm=document.createElement("span");
+    anm.textContent=(audioMode==="up") ? (customAudio.name ? "صوت مرفوع: "+customAudio.name : "صوت مرفوع من الجهاز") : "تلاوة "+refText()+" — "+reciterOpt().dataset.name;
+    var adu=document.createElement("span"); adu.className="au-dur"; adu.textContent=fmtTime(S.total);
+    meta.appendChild(anm); meta.appendChild(adu); blk.appendChild(meta);
+    auLane.appendChild(blk);
+    requestAnimationFrame(function(){ drawWave(cv); });
+  } else {
+    var aph=document.createElement("div"); aph.className="tl-au-ph";
+    aph.textContent= tlAudioBusy ? "جارٍ تحميل تلاوة الآية المختارة بصوت القارئ المختار…"
+      : (audioMode==="up" ? "لم تختر ملف الصوت بعد — ارفعه من خطوة «القارئ» لتظهر موجته ومدته هنا"
+      : "ستظهر هنا تلاوة الآية المختارة بصوت القارئ المختار بموجتها ومدتها — تُحمَّل تلقائيًا عند فتح هذه الخطوة");
+    auLane.appendChild(aph);
+  }
+  /* مسار الفيديو / الصور: المقاطع بعرض مددها مع مقابض التحجيم */
+  lane.innerHTML="";
   if(!TL.clips.length){
-    var em=document.createElement("div"); em.className="tl-empty";
+    var em=document.createElement("div"); em.className="tl-lane-empty";
     em.textContent="الشريط فارغ — أضف أول مقطع من الأزرار بالأسفل";
-    strip.appendChild(em);
+    lane.appendChild(em);
   }
   TL.clips.forEach(function(c,i){
     var seg=document.createElement("div");
-    seg.className="tl-seg"+(i===tlCurIdx?" on":"");
-    seg.style.flex=Math.max(1,c.dur||5)+" 1 0"; seg.title=c.name;
+    seg.className="tl-seg"+(i===tlCurIdx?" on":"")+(c===tlSelClip?" sel":"");
+    seg.dataset.i=i;
+    seg.style.width=(Math.max(1,c.dur||5)/sc*100)+"%";
+    seg.title=c.name+" — اسحب المقطع لإعادة ترتيبه، واسحب حافّتيه لتغيير مدته";
     var th=tlThumbSrc(c);
     if(th){ var im=document.createElement("img"); im.src=th; im.alt=""; seg.appendChild(im); }
     else { var dv=document.createElement("div"); dv.className="seg-vid"; dv.textContent="▶"; seg.appendChild(dv); }
@@ -1372,11 +1475,34 @@ function tlRender(){
     var lb=document.createElement("span"); lb.className="seg-lbl";
     lb.textContent=c.name+" • "+(c.dur||5)+"ث";
     seg.appendChild(lb);
-    strip.appendChild(seg);
+    var h1=document.createElement("span"); h1.className="seg-h start"; h1.title="اسحب لتغيير مدة المقطع";
+    var h2=document.createElement("span"); h2.className="seg-h end"; h2.title="اسحب لتغيير مدة المقطع";
+    seg.appendChild(h1); seg.appendChild(h2);
+    h1.addEventListener("pointerdown", function(e){ segResizeDown(e,c,seg,"start"); });
+    h2.addEventListener("pointerdown", function(e){ segResizeDown(e,c,seg,"end"); });
+    seg.addEventListener("pointerdown", function(e){ segPointerDown(e,c,seg); });
+    lane.appendChild(seg);
   });
+  /* ظلال التكرار التلقائي: كيف ستتكرر السلسلة حتى نهاية الصوت */
+  if(TL.clips.length && seq>0 && audioEnd>seq){
+    var gAcc=seq, gi=0, guard=0;
+    while(gAcc<audioEnd && guard<60){
+      var gc=TL.clips[gi%TL.clips.length], gd=Math.max(1,gc.dur||5), gw=Math.min(gd, audioEnd-gAcc);
+      var gs=document.createElement("div"); gs.className="tl-seg ghost";
+      gs.style.width=(gw/sc*100)+"%";
+      var gth=tlThumbSrc(gc);
+      if(gth){ var gim=document.createElement("img"); gim.src=gth; gim.alt=""; gs.appendChild(gim); }
+      else { var gdv=document.createElement("div"); gdv.className="seg-vid"; gdv.textContent="▶"; gs.appendChild(gdv); }
+      var glb=document.createElement("span"); glb.className="seg-lbl"; glb.textContent="تكرار تلقائي";
+      gs.appendChild(glb);
+      lane.appendChild(gs);
+      gAcc+=gd; gi++; guard++;
+    }
+  }
   var list=$("tlList"); list.innerHTML="";
   TL.clips.forEach(function(c,i){
-    var row=document.createElement("div"); row.className="tl-row";
+    var row=document.createElement("div"); row.className="tl-row"+(c===tlSelClip?" sel":"");
+    row.addEventListener("click", function(e){ if(e.target.tagName!=="INPUT" && e.target.tagName!=="BUTTON") selectClip(c); });
     var th=tlThumbSrc(c);
     if(th){ var im2=document.createElement("img"); im2.src=th; im2.alt=""; row.appendChild(im2); }
     else { var dv2=document.createElement("div"); dv2.className="row-vid"; dv2.textContent="▶"; row.appendChild(dv2); }
@@ -1391,13 +1517,14 @@ function tlRender(){
     inp.setAttribute("aria-label","مدة المقطع بالثواني");
     inp.addEventListener("change", function(){
       c.dur=Math.max(1, Math.min(600, parseInt(inp.value,10)||5));
-      c.autoDur=false; tlRender();
+      c.autoDur=false; TL.touched=true; tlRender();
     });
     row.appendChild(inp);
     var un=document.createElement("span"); un.className="un"; un.textContent="ث"; row.appendChild(un);
     var mv1=document.createElement("button");
     mv1.type="button"; mv1.className="mini"; mv1.textContent="‹"; mv1.title="نقل المقطع إلى الأمام"; mv1.disabled=(i===0);
     mv1.addEventListener("click", function(){
+      TL.touched=true;
       var tmp=TL.clips[i-1]; TL.clips[i-1]=TL.clips[i]; TL.clips[i]=tmp;
       tlCurIdx=-1; tlCurClip=null; tlRender(); if(tlActive()) tlSync(0);
     });
@@ -1405,6 +1532,7 @@ function tlRender(){
     var mv2=document.createElement("button");
     mv2.type="button"; mv2.className="mini"; mv2.textContent="›"; mv2.title="نقل المقطع إلى الخلف"; mv2.disabled=(i===TL.clips.length-1);
     mv2.addEventListener("click", function(){
+      TL.touched=true;
       var tmp=TL.clips[i+1]; TL.clips[i+1]=TL.clips[i]; TL.clips[i]=tmp;
       tlCurIdx=-1; tlCurClip=null; tlRender(); if(tlActive()) tlSync(0);
     });
@@ -1427,15 +1555,19 @@ function tlRender(){
     info.textContent=s;
   }
   $("tlBox").classList.toggle("off", !$("tlOn").checked);
+  renderTools();
 }
 function tlFreeClip(c){
   if(c.ve){ try{ c.ve.pause(); }catch(e){} if(c.ve.parentNode) c.ve.parentNode.removeChild(c.ve); c.ve=null; }
-  if(c.custom && c.srcUrl && c.srcUrl!==upState.url) URL.revokeObjectURL(c.srcUrl);
-  if(c.custom && c.kind==="img" && c.src && c.src!==upState.url) URL.revokeObjectURL(c.src);
+  if(c.custom && c.srcUrl && c.srcUrl!==upState.url && !TL.clips.some(function(o){ return o.srcUrl===c.srcUrl; })) URL.revokeObjectURL(c.srcUrl);
+  if(c.custom && c.kind==="img" && c.src && c.src!==upState.url && !TL.clips.some(function(o){ return o.src===c.src; })) URL.revokeObjectURL(c.src);
 }
 function tlRemoveClip(i){
   var c=TL.clips[i]; if(!c) return;
+  TL.touched=true;
+  if(TL.auto===c){ TL.auto=null; TL.autoSig=""; }
   TL.clips.splice(i,1); tlFreeClip(c);
+  if(tlSelClip===c) tlSelClip=null;
   tlCurIdx=-1; tlCurClip=null;
   if(!TL.clips.length){ tlDeactivate(); tlRestoreSingle(); }
   tlRender(); if(tlActive()) tlSync(0);
@@ -1461,7 +1593,47 @@ function clipFromCurrentBg(){
   if(S.bg.type==="img") return {kind:"img", src:S.bg.src, custom:!!S.bg.custom, name:currentBgName(), dur:5, autoDur:false};
   return {kind:"video", vidId:S.bg.custom?null:S.bg.id, custom:!!S.bg.custom, srcUrl:S.bg.custom?upState.url:null, poster:S.bg.custom?null:VID_BASE+S.bg.id+".jpg", name:currentBgName(), dur:10, autoDur:true};
 }
+/* ============ تعبئة الشريط التلقائية من اختيارات الخطوات السابقة ============
+   مسار الصوت يعكس دائمًا الآية والقارئ الحاليين (أو الصوت المرفوع)، ومسار
+   الفيديو/الصور يعرض الخلفية المختارة حاليًا كمقطع تلقائي — حتى دون ضغط
+   «أضف الخلفية الحالية». ما دام المستخدم لم يعدّل التسلسل بنفسه (TL.touched)
+   يتحدث المقطع التلقائي مع أي تغيير للخلفية؛ وبعد أول تعديل يدوي لا يُفرض
+   عليه أي تغيير تلقائي أبدًا */
+function tlAutoSig(){
+  var pressed=document.querySelector('.bg-opt[aria-pressed="true"]');
+  if(pressed) return pressed.dataset.bg||"";
+  if(S.bg.custom) return "up:"+(upState.url||"");
+  if(S.bg.type==="video") return "vid:"+(S.bg.id||"");
+  if(S.bg.type==="img") return "img:"+(S.bg.src||"");
+  return "";
+}
+function tlSyncAutoClip(create, keepOn){
+  if(TL.touched) return;
+  var sig=tlAutoSig(); if(!sig) return;
+  var idx=TL.auto ? TL.clips.indexOf(TL.auto) : -1;
+  if(idx>=0 && TL.autoSig===sig) return;
+  if(idx<0 && (!create || TL.clips.length)) return;
+  var clip=clipFromCurrentBg();
+  if(idx>=0){ var old=TL.clips[idx]; TL.clips[idx]=clip; tlFreeClip(old); }
+  else TL.clips.push(clip);
+  TL.auto=clip; TL.autoSig=sig;
+  if(clip.kind==="video") ensureClipMedia(clip);
+  var on=$("tlOn"); if(on) on.checked= create ? true : !!keepOn;
+  tlCurIdx=-1; tlCurClip=null;
+  tlRender();
+  if(tlActive()) tlSync(0);
+}
+/* تحميل تلاوة الآية الحالية بصوت القارئ الحالي تلقائيًا عند فتح خطوة الشريط،
+   حتى يعرض مسار الصوت اسمها ومدتها وموجتها دون انتظار أول تشغيل للمعاينة */
+function tlEnsureAudio(){
+  if(S.total>0 || tlAudioBusy) return;
+  if(audioMode==="up" && !customAudio.buffer) return;
+  tlAudioBusy=true; tlRender();
+  ensureAudio().then(function(){ tlAudioBusy=false; tlRender(); })
+    .catch(function(){ tlAudioBusy=false; tlRender(); });
+}
 $("tlAddCur").addEventListener("click", function(){
+  TL.touched=true;
   var clip=clipFromCurrentBg();
   TL.clips.push(clip); ensureClipMedia(clip);
   $("tlOn").checked=true;
@@ -1479,6 +1651,7 @@ $("tlFile").addEventListener("change", function(){
   var clip=isImg
     ? {kind:"img", src:url, custom:true, name:f.name, dur:5, autoDur:false}
     : {kind:"video", vidId:null, custom:true, srcUrl:url, poster:null, name:f.name, dur:10, autoDur:true};
+  TL.touched=true;
   TL.clips.push(clip); ensureClipMedia(clip);
   $("tlOn").checked=true;
   tlCurIdx=-1; tlCurClip=null; tlRender(); tlSync(0);
@@ -1486,6 +1659,8 @@ $("tlFile").addEventListener("change", function(){
 });
 $("tlClear").addEventListener("click", function(){
   while(TL.clips.length) tlFreeClip(TL.clips.pop());
+  TL.auto=null; TL.autoSig=""; TL.touched=true;
+  tlSelClip=null;
   tlDeactivate(); tlRestoreSingle(); tlRender();
   toast("تم مسح الشريط الزمني");
 });
@@ -1498,6 +1673,252 @@ $("tlOn").addEventListener("change", function(){
   }
 });
 tlRender();
+
+/* ================= محرّر المسارات: مقياس ومؤشر وموجة وسحب وأدوات ================= */
+function tlScale(){
+  var audioEnd=S.total>0 ? S.total + GAP*Math.max(0,S.durations.length-1) : 0;
+  var sc=Math.max(audioEnd, tlSeqDur());
+  return sc>0 ? sc : 10;
+}
+function fmtTick(s){
+  s=Math.round(s);
+  if(s<60) return ""+s;
+  return Math.floor(s/60)+":"+("0"+(s%60)).slice(-2);
+}
+function fmtPos(s){ if(!(s>0)) return "0 ث"; return fmtTime(s); }
+function setPlayheadPos(t){
+  var ph=$("tlPlay2"); if(!ph) return;
+  var sc=tlScale();
+  ph.style.insetInlineStart=(sc>0 ? Math.max(0, Math.min(1, t/sc))*100 : 0)+"%";
+  var pos=$("tlPos");
+  if(pos){
+    var tot=(S.total>0 ? totalDur() : sc);
+    pos.textContent="الموضع: "+fmtPos(Math.min(Math.max(0,t), tot))+" / "+fmtPos(tot);
+  }
+}
+/* موجة الصوت مرسومة من عيّنات التلاوة الفعلية المحمّلة */
+function wavePeaks(){
+  var bufs=(audioMode==="up" && customAudio.buffer) ? [customAudio.buffer] : S.buffers;
+  if(!bufs || !bufs.length) return null;
+  var N=180, total=0, offs=[], i, b;
+  for(i=0;i<bufs.length;i++){ offs.push(total); total+=bufs[i].length; }
+  if(!total) return null;
+  function sampleAt(g){
+    for(var j=bufs.length-1;j>=0;j--){
+      if(g>=offs[j]){ var ch=bufs[j].getChannelData(0), idx=g-offs[j]; return idx<ch.length ? ch[idx] : 0; }
+    }
+    return 0;
+  }
+  var peaks=[], max=0.0001;
+  for(b=0;b<N;b++){
+    var start=Math.floor(b*total/N), end=Math.max(start+1, Math.floor((b+1)*total/N)), m=0, k, v;
+    var cnt=Math.min(48, end-start), stp=Math.max(1, Math.floor((end-start)/cnt));
+    for(k=start;k<end;k+=stp){ v=Math.abs(sampleAt(k)); if(v>m) m=v; }
+    peaks.push(m); if(m>max) max=m;
+  }
+  for(b=0;b<N;b++) peaks[b]=peaks[b]/max;
+  return peaks;
+}
+function drawWave(cv){
+  if(!cv) return;
+  var w=cv.clientWidth, h=cv.clientHeight; if(!w || !h) return;
+  var dpr=Math.min(2, window.devicePixelRatio||1);
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  var ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  var peaks=wavePeaks();
+  ctx.fillStyle="rgba(243,217,139,.92)";
+  if(!peaks){ ctx.fillRect(0, Math.round(h/2)-1, w, 2); return; }
+  var bw=w/peaks.length;
+  for(var i=0;i<peaks.length;i++){
+    var bh=Math.max(2, peaks[i]*(h-10));
+    ctx.fillRect(i*bw+(bw>2.5?0.75:0), (h-bh)/2, Math.max(1, bw-1.2), bh);
+  }
+}
+/* تحديد مقطع وإظهار أدواته */
+function selectClip(c){
+  tlSelClip=c;
+  document.querySelectorAll("#tlVideoLane .tl-seg").forEach(function(sg){
+    sg.classList.toggle("sel", TL.clips[+sg.dataset.i]===c);
+  });
+  document.querySelectorAll("#tlList .tl-row").forEach(function(rw,i){
+    rw.classList.toggle("sel", TL.clips[i]===c);
+  });
+  renderTools();
+}
+function renderTools(){
+  var bar=$("tlTools"); if(!bar) return;
+  var c=tlSelClip, i=c ? TL.clips.indexOf(c) : -1;
+  if(!c || i<0){ bar.hidden=true; return; }
+  bar.hidden=false;
+  var tt=$("tlToolType");
+  tt.className="row-type "+(c.kind==="video"?"vid":"img");
+  tt.textContent=(c.kind==="video"?"فيديو":"صورة");
+  $("tlToolName").textContent=c.name;
+  var inp=$("tlToolDur");
+  if(document.activeElement!==inp) inp.value=c.dur||5;
+  $("tlToolPrev").disabled=(i===0);
+  $("tlToolNext").disabled=(i===TL.clips.length-1);
+}
+function tlDuplicateClip(c){
+  var i=TL.clips.indexOf(c); if(i<0) return;
+  TL.touched=true;
+  var n={kind:c.kind, name:c.name, dur:c.dur||5, autoDur:false, custom:!!c.custom,
+    vidId:c.vidId||null, srcUrl:c.srcUrl||null, poster:c.poster||null, src:c.src||null};
+  TL.clips.splice(i+1,0,n);
+  if(n.kind==="video") ensureClipMedia(n);
+  tlSelClip=n; tlCurIdx=-1; tlCurClip=null;
+  tlRender(); if(tlActive()) tlSync(0);
+  toast("تم تكرار «"+c.name+"» ✓");
+}
+/* سحب المؤشر: تنقّل يدوي في موضع المعاينة (المقطع والآية والكلمات وبطاقة الختام) */
+function scrubTo(t){
+  if(play.active){ if(play.mode==="rec") return; finishPlayback(); }
+  var sc=tlScale();
+  var maxT=(S.total>0 ? totalDur() : sc);
+  t=Math.max(0, Math.min(t, maxT));
+  setPlayheadPos(t);
+  if(tlActive()) tlSync(t);
+  if(S.total>0){
+    $("pvBar").style.width=Math.min(100, t/totalDur()*100)+"%";
+    var audioEnd=S.total + GAP*Math.max(0,S.durations.length-1);
+    if(t>=audioEnd && $("showEnd").checked){ $("pvEnd").classList.add("show"); }
+    else{
+      $("pvEnd").classList.remove("show");
+      var loc=locate(Math.min(t, audioEnd));
+      if(loc.i!==pvAyah) renderPreviewAyah(loc.i);
+      var spans=$("pvText").querySelectorAll(".w");
+      var on=Math.floor(loc.p*spans.length), hlOn=$("hlWords").checked;
+      spans.forEach(function(s,idx){ s.classList.toggle("on", hlOn && idx<on); });
+    }
+  }
+}
+/* سحب حافّتي المقطع: تمديد أو تقصير بصري يغيّر مدته */
+function segResizeDown(e, c, seg, edge){
+  e.stopPropagation(); e.preventDefault();
+  selectClip(c);
+  var lane=$("tlVideoLane"); if(!lane) return;
+  var sc0=tlScale(), pxPerSec=lane.clientWidth/sc0;
+  if(!(pxPerSec>0)) return;
+  var startX=e.clientX, startDur=c.dur||5;
+  try{ seg.setPointerCapture(e.pointerId); }catch(err){}
+  function mv(ev){
+    var dx=ev.clientX-startX;
+    var d=(edge==="end") ? startDur - dx/pxPerSec : startDur + dx/pxPerSec;
+    d=Math.max(1, Math.min(600, Math.round(d)));
+    c.dur=d; c.autoDur=false; TL.touched=true;
+    seg.style.width=(d/sc0*100)+"%";
+    var lb=seg.querySelector(".seg-lbl"); if(lb) lb.textContent=c.name+" • "+d+"ث";
+    var inp=$("tlToolDur"); if(tlSelClip===c && document.activeElement!==inp) inp.value=d;
+  }
+  function up(){
+    seg.removeEventListener("pointermove", mv);
+    seg.removeEventListener("pointerup", up);
+    seg.removeEventListener("pointercancel", up);
+    tlCurIdx=-1; tlCurClip=null; tlRender(); if(tlActive()) tlSync(0);
+  }
+  seg.addEventListener("pointermove", mv);
+  seg.addEventListener("pointerup", up);
+  seg.addEventListener("pointercancel", up);
+}
+/* سحب المقطع أفقيًا لإعادة ترتيبه — والضغط الخفيف يحدّده فقط */
+function segPointerDown(e, c, seg){
+  if(e.button!==undefined && e.button>0) return;
+  e.preventDefault();
+  selectClip(c);
+  var lane=$("tlVideoLane"); if(!lane) return;
+  var startX=e.clientX, moved=false;
+  try{ seg.setPointerCapture(e.pointerId); }catch(err){}
+  function mv(ev){
+    var dx=ev.clientX-startX;
+    if(!moved && Math.abs(dx)>6){ moved=true; seg.classList.add("drag"); }
+    if(moved) seg.style.transform="translateX("+dx+"px)";
+  }
+  function up(ev){
+    seg.removeEventListener("pointermove", mv);
+    seg.removeEventListener("pointerup", up);
+    seg.removeEventListener("pointercancel", up);
+    seg.classList.remove("drag"); seg.style.transform="";
+    if(!moved) return;
+    /* خانة الإسقاط هي خانة المقطع الأقرب منتصفُه الحقيقي لنقطة الإفلات: تُقاس منتصفات
+       المقاطع كما هي مرسومة فعلًا على الشاشة (مستطيل كل مقطع بعد إزالة إزاحة السحب
+       أعلاه)، فتغطي كل خانةٍ كاملَ جسم مقطعها، وحدودها عند منتصف المسافة بين منتصفات
+       الجيران — فيستقر المقطع في الخانة التي أُفلت فوقها تمامًا مهما ابتعدت، بما فيها
+       الخانة الأولى والأخيرة. الحساب القديم كان يجمع العروض النظرية للمقاطع متجاهلًا
+       حشوة المسار والفجوات بينها وكسور العرض، فيتراكم الخطأ مع بُعد الإفلات ويستقر
+       المقطع خانة قبل موضعه المطلوب أو بعده */
+    var laneRect=lane.getBoundingClientRect();
+    var pos=laneRect.right - ev.clientX;
+    var segs=lane.querySelectorAll(".tl-seg:not(.ghost)");
+    var target=0, best=Infinity;
+    for(var i=0;i<segs.length;i++){
+      var sr=segs[i].getBoundingClientRect();
+      var mid=(laneRect.right - sr.right) + sr.width/2;
+      var dd=Math.abs(pos-mid);
+      if(dd<best){ best=dd; target=i; }
+    }
+    var from=TL.clips.indexOf(c);
+    if(from>=0 && target!==from){
+      TL.touched=true;
+      TL.clips.splice(from,1); TL.clips.splice(target,0,c);
+      tlCurIdx=-1; tlCurClip=null;
+      toast("تم نقل «"+c.name+"» إلى الموضع "+(target+1));
+    }
+    tlRender(); if(tlActive()) tlSync(0);
+  }
+  seg.addEventListener("pointermove", mv);
+  seg.addEventListener("pointerup", up);
+  seg.addEventListener("pointercancel", up);
+}
+/* سحب المؤشر على المسطرة والمسارات */
+(function(){
+  var lanes=$("tlLanes"); if(!lanes) return;
+  var scrubbing=false;
+  function posToTime(clientX){
+    var r=lanes.getBoundingClientRect(); if(!r.width) return 0;
+    var p=(r.right-clientX)/r.width;
+    return Math.max(0, Math.min(1, p))*tlScale();
+  }
+  lanes.addEventListener("pointerdown", function(e){
+    if(e.target.closest && e.target.closest(".tl-seg")) return;
+    e.preventDefault();
+    scrubbing=true;
+    try{ lanes.setPointerCapture(e.pointerId); }catch(err){}
+    scrubTo(posToTime(e.clientX));
+  });
+  lanes.addEventListener("pointermove", function(e){ if(scrubbing) scrubTo(posToTime(e.clientX)); });
+  lanes.addEventListener("pointerup", function(){ scrubbing=false; });
+  lanes.addEventListener("pointercancel", function(){ scrubbing=false; });
+})();
+/* أدوات المقطع المحدد */
+$("tlToolDur").addEventListener("change", function(){
+  var c=tlSelClip; if(!c) return;
+  c.dur=Math.max(1, Math.min(600, parseInt(this.value,10)||5));
+  c.autoDur=false; TL.touched=true;
+  tlCurIdx=-1; tlCurClip=null; tlRender(); if(tlActive()) tlSync(0);
+});
+$("tlToolDup").addEventListener("click", function(){ if(tlSelClip) tlDuplicateClip(tlSelClip); });
+$("tlToolDel").addEventListener("click", function(){
+  var i=tlSelClip ? TL.clips.indexOf(tlSelClip) : -1;
+  if(i>=0) tlRemoveClip(i);
+});
+$("tlToolPrev").addEventListener("click", function(){
+  var i=tlSelClip ? TL.clips.indexOf(tlSelClip) : -1; if(i<=0) return;
+  TL.touched=true;
+  var tmp=TL.clips[i-1]; TL.clips[i-1]=TL.clips[i]; TL.clips[i]=tmp;
+  tlCurIdx=-1; tlCurClip=null; tlRender(); if(tlActive()) tlSync(0);
+});
+$("tlToolNext").addEventListener("click", function(){
+  var i=tlSelClip ? TL.clips.indexOf(tlSelClip) : -1; if(i<0 || i>=TL.clips.length-1) return;
+  TL.touched=true;
+  var tmp=TL.clips[i+1]; TL.clips[i+1]=TL.clips[i]; TL.clips[i]=tmp;
+  tlCurIdx=-1; tlCurClip=null; tlRender(); if(tlActive()) tlSync(0);
+});
+window.addEventListener("resize", function(){
+  var cv=document.querySelector("#tlAudioLane canvas");
+  if(cv) drawWave(cv);
+});
+setPlayheadPos(0);
 
 /* ================= بيانات النشر ================= */
 function updatePublish(){
@@ -1616,6 +2037,7 @@ function syncSettingsToPreview(){
 }
 document.querySelectorAll(".bg-opt").forEach(function(b){
   b.addEventListener("click", function(){
+    var tlWasOn=$("tlOn").checked;
     tlDeactivate();
     document.querySelectorAll(".bg-opt").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
     b.setAttribute("aria-pressed","true");
@@ -1632,6 +2054,7 @@ document.querySelectorAll(".bg-opt").forEach(function(b){
     }
     $("phone").style.background="#06110c";
     updateBgStatus();
+    tlSyncAutoClip(false, tlWasOn);
   });
 });
 /* ================= خلفية مرفوعة من الجهاز ================= */
@@ -1647,6 +2070,7 @@ $("upFile").addEventListener("change", function(){
   if(!f) return;
   var isImg=f.type.indexOf("image/")===0, isVid=f.type.indexOf("video/")===0;
   if(!isImg && !isVid){ setStatus($("playStatus"),"الملف المختار ليس صورة ولا مقطع فيديو — اختر ملفًا آخر","err"); return; }
+  var tlWasOn=$("tlOn").checked;
   tlDeactivate();
   if(upState.url && !TL.clips.some(function(c){ return c.src===upState.url || c.srcUrl===upState.url; })) URL.revokeObjectURL(upState.url);
   var url=URL.createObjectURL(f);
@@ -1672,6 +2096,7 @@ $("upFile").addEventListener("change", function(){
   $("phone").style.background="#06110c";
   setStatus($("playStatus"),"الخلفية المرفوعة جاهزة ✓ — عاينها ثم سجّل الفيديو","ok");
   updateBgStatus();
+  tlSyncAutoClip(false, tlWasOn);
 });
 $("upZoom").addEventListener("change", applyUpZoomClass);
 $("upRemove").addEventListener("click", function(){
@@ -1791,6 +2216,7 @@ function goToStep(n){
   if(curStep===6 && play.active && play.mode==="play"){ finishPlayback(); resetPreview(); }
   curStep=n;
   paintStep();
+  if(n===5){ tlSyncAutoClip(true, true); tlEnsureAudio(); }
   if(n===6 && tlActive()) tlSync(0);
   var nv=$("stepNav"); if(nv) nv.scrollIntoView({behavior:"smooth", block:"start"});
 }
