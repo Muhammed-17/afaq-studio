@@ -367,6 +367,15 @@
       .rec-wrap.show{ display:block; }
       .rec-wrap .lbl{ font-size:14px; font-weight:700; color:var(--danger); }
 
+      /* ---------- النشر المباشر على يوتيوب ---------- */
+      .yt-box{ margin-top:22px; border-top:1px solid var(--line); padding-top:18px; }
+      .yt-h{ font-size:18px; margin:0; }
+      .yt-lbl{ color:var(--accent) !important; }
+      .yt-pct{ font-size:14px; font-weight:800; color:var(--gold); margin-top:4px; }
+      .yt-done{ margin-top:12px; background:var(--surface2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
+      .yt-linkrow{ font-size:14.5px; margin-bottom:2px; word-break:break-all; }
+      .yt-linkrow a{ color:var(--accent); font-weight:700; }
+
       /* ---------- التذييل ---------- */
       .foot{ margin-top:26px; border-top:1px solid var(--line); padding-top:20px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
       .foot img{ height:44px; width:auto; flex:none; }
@@ -721,6 +730,29 @@
               <textarea id="pinOut" rows="2" readonly></textarea>
               <button type="button" class="btn ghost" data-copy="pinOut">نسخ</button>
             </div>
+            <div class="yt-box">
+              <h3 class="yt-h">النشر المباشر على يوتيوب</h3>
+              <p class="note">سيُنشر الفيديو بحالة <b>«خاص»</b> في هذه المرحلة — هذا ما تفرضه جوجل حتى اعتماد مشروع التطبيق رسميًا. بعد الرفع تستطيع جعله <b>عامًا</b> بنقرة واحدة من تطبيق YouTube Studio. وإن لم يكن الفيديو مُسجَّلًا بعد، سيُسجَّل تلقائيًا أولًا ثم يُرفع بنفس العنوان والوصف والهاشتاجات الظاهرة بالأعلى.</p>
+              <div class="btnrow">
+                <button type="button" class="btn gold" id="ytBtn">▶ نشر على يوتيوب</button>
+              </div>
+              <div class="rec-wrap" id="ytWrap">
+                <div class="lbl yt-lbl">جارٍ الرفع إلى يوتيوب… لا تغلق الصفحة</div>
+                <progress id="ytProg" value="0" max="100"></progress>
+                <div class="yt-pct" id="ytPct">0%</div>
+              </div>
+              <div class="status" id="ytStatus"></div>
+              <div class="yt-done" id="ytDone" hidden>
+                <div class="yt-linkrow">رابط الفيديو: <a id="ytLink" href="#" target="_blank" rel="noopener" dir="ltr"></a></div>
+                <div class="btnrow">
+                  <a class="btn primary" id="ytOpen" href="#" target="_blank" rel="noopener">فتح الفيديو على يوتيوب</a>
+                  <button type="button" class="btn ghost" id="ytCopy">نسخ الرابط</button>
+                </div>
+              </div>
+              <div class="btnrow" id="ytRetryRow" style="display:none">
+                <button type="button" class="btn ghost" id="ytRetry">↻ إعادة المحاولة</button>
+              </div>
+            </div>
           </section>
         </div>
       </div>
@@ -736,6 +768,7 @@
           <p>نصوص الآيات بالرسم العثماني من AlQuran Cloud، والتلاوات الصوتية من EveryAyah — ويُركَّب الفيديو ويُصدَّر بالكامل داخل متصفحك.<br />خلفيات الفيديو: لقطات حقيقية من ويكيميديا كومنز (طواف الحج: Amm Salim).</p>
         </div>
         <a href="https://www.youtube.com/channel/UCD0u2xdyUJ6OCgzqO_SQRGQ" target="_blank" rel="noopener">قناة آفاق على يوتيوب</a>
+        <a href="https://muhammed-17.github.io/afaq-studio/privacy.html" target="_blank" rel="noopener">سياسة الخصوصية</a>
       </footer>
     </div>
     <div class="toast" id="toast">تم النسخ ✓</div>
@@ -1206,6 +1239,7 @@ function drawFrame(ctx, W, H, t){
   ctx.fillStyle="rgba(255,255,255,.22)"; ctx.fillRect(0,H-14,W,14);
   ctx.fillStyle="#e3b94e"; ctx.fillRect(0,H-14, W*Math.min(1,t/td), 14);
 }
+var lastRec=null;
 $("recBtn").addEventListener("click", async function(){
   if(play.active) return;
   var btn=this; btn.disabled=true;
@@ -1279,6 +1313,7 @@ $("recBtn").addEventListener("click", async function(){
     var url=URL.createObjectURL(blob);
     var ext = mime.indexOf("mp4")>=0 ? "mp4" : "webm";
     var fname="afaq-"+S.surah+"-"+S.from+(S.to>S.from?"-"+S.to:"")+"."+ext;
+    lastRec={blob:blob, mime:mime, fname:fname, sig:recSig()};
     $("outVideo").src=url;
     var dl=$("dlLink"); dl.href=url; dl.setAttribute("download", fname);
     $("outWrap").style.display="block";
@@ -1940,6 +1975,192 @@ function updatePublish(){
   $("pinOut").value = "ما أكثر آية تلامس قلبك من سورة "+name+"؟ اكتبها في تعليق 🤍";
   renderVerseBox();
 }
+/* ================= النشر المباشر على يوتيوب ================= */
+var YT_CLIENT_ID="179717377675-ilmuhees9qs71oubo9gahli7ob54uv9k.apps.googleusercontent.com";
+var YT_SCOPE="https://www.googleapis.com/auth/youtube.upload";
+var ytToken=null, ytTokenExp=0, ytTokenClient=null, ytGisPromise=null, ytBusy=false;
+/* بصمة الإعدادات الحالية — تُقارن ببصمة آخر تسجيل لمعرفة إن كان الفيديو الجاهز يطابق الاختيارات */
+function recSig(){
+  var bgSig=S.bg.type+":"+(S.bg.custom ? "custom" : (S.bg.id||S.bg.src||""));
+  var tlSig=tlActive() ? TL.clips.map(function(c){ return (c.kind||"")+":"+(c.src||c.srcUrl||"")+":"+(c.dur||5); }).join(",") : "single";
+  var colEl=document.querySelector('input[name="textColor"]:checked');
+  return [key(), audioMode, bgSig, tlSig, $("fontRange").value, colEl?colEl.value:"", $("dimRange").value,
+    $("showHook").checked, $("showMark").checked, $("showEnd").checked, $("hlWords").checked, $("hookInput").value].join("|");
+}
+function loadGis(){
+  if(window.google && google.accounts && google.accounts.oauth2) return Promise.resolve();
+  if(ytGisPromise) return ytGisPromise;
+  ytGisPromise=new Promise(function(res, rej){
+    var sc=document.createElement("script");
+    sc.src="https://accounts.google.com/gsi/client";
+    sc.async=true; sc.defer=true;
+    sc.onload=function(){ res(); };
+    sc.onerror=function(){ ytGisPromise=null; rej(new Error("تعذّر تحميل خدمة تسجيل دخول جوجل — تحقق من اتصالك بالإنترنت ثم أعد المحاولة")); };
+    document.head.appendChild(sc);
+  });
+  return ytGisPromise;
+}
+function ytGetToken(){
+  if(ytToken && Date.now()<ytTokenExp-30000) return Promise.resolve(ytToken);
+  return loadGis().then(function(){
+    return new Promise(function(res, rej){
+      if(!ytTokenClient){
+        ytTokenClient=google.accounts.oauth2.initTokenClient({
+          client_id:YT_CLIENT_ID, scope:YT_SCOPE,
+          callback:function(){}, error_callback:function(){}
+        });
+      }
+      ytTokenClient.callback=function(resp){
+        if(resp && resp.access_token){
+          ytToken=resp.access_token;
+          ytTokenExp=Date.now()+((resp.expires_in||3600)*1000);
+          res(ytToken);
+        } else {
+          rej(new Error("لم يكتمل تسجيل الدخول إلى جوجل — أعد المحاولة"));
+        }
+      };
+      ytTokenClient.error_callback=function(){
+        rej(new Error("أُلغي تسجيل الدخول إلى جوجل أو حدث خطأ فيه — أعد المحاولة"));
+      };
+      ytTokenClient.requestAccessToken({prompt:""});
+    });
+  });
+}
+/* إن لم يوجد فيديو مُسجَّل يطابق الإعدادات الحالية، يُشغَّل التسجيل الحالي أولًا */
+function ytEnsureVideo(sig){
+  if(lastRec && lastRec.sig===sig) return Promise.resolve(lastRec);
+  if(play.active) return Promise.reject(new Error("أوقف المعاينة أولًا من خطوة «المعاينة والتصدير» ثم أعد المحاولة"));
+  setStatus($("ytStatus"),"جارٍ تسجيل الفيديو أولًا… قد يستغرق التسجيل مدة التلاوة نفسها","");
+  $("recBtn").click();
+  return new Promise(function(res, rej){
+    var waited=0;
+    var iv=setInterval(function(){
+      waited+=500;
+      if(lastRec && lastRec.sig===sig){ clearInterval(iv); res(lastRec); return; }
+      if(waited>1500 && !$("recBtn").disabled && !play.active){
+        clearInterval(iv);
+        var ps=$("playStatus");
+        rej(new Error((ps && ps.classList.contains("err") && ps.textContent) ? ps.textContent : "تعذّر تسجيل الفيديو — جرّب التسجيل يدويًا من خطوة «المعاينة والتصدير» ثم أعد المحاولة"));
+        return;
+      }
+      if(waited>15*60*1000){ clearInterval(iv); rej(new Error("استغرق التسجيل وقتًا طويلًا جدًا — أعد المحاولة")); }
+    },500);
+  });
+}
+function ytMetadata(){
+  var title=($("titleOut").value||"").trim()||"تلاوة قرآنية | قناة آفاق";
+  var desc=$("descOut").value||"";
+  var tags=[], seen={};
+  (desc.match(/#[^\s#]+/g)||[]).forEach(function(t){
+    var w=t.slice(1).replace(/_/g," ").trim();
+    if(w && !seen[w]){ seen[w]=1; tags.push(w); }
+  });
+  ["آفاق","قرآن كريم","تلاوة خاشعة"].forEach(function(w){ if(!seen[w]){ seen[w]=1; tags.push(w); } });
+  return {
+    snippet:{ title:title.slice(0,100), description:desc, tags:tags.slice(0,30), categoryId:"27" },
+    status:{ privacyStatus:"private", selfDeclaredMadeForKids:false }
+  };
+}
+function ytErrText(status, body){
+  var reason="";
+  try{ var j=JSON.parse(body); reason=(j.error && j.error.errors && j.error.errors[0] && j.error.errors[0].reason)||""; }catch(e){}
+  if(reason==="quotaExceeded" || reason==="uploadLimitExceeded") return "رفض يوتيوب الرفع: بُلغ الحد اليومي المسموح به لهذا المشروع (نحو ٦ فيديوهات يوميًا في هذه المرحلة) — حاول مرة أخرى غدًا";
+  if(status===403) return "رفض يوتيوب الرفع (صلاحيات غير كافية أو حد يومي) — تأكد أنك سجّلت الدخول بحساب قناة آفاق ثم أعد المحاولة";
+  if(status===400) return "رفض يوتيوب بيانات الفيديو (العنوان أو الوصف) — عدّلها في الأعلى ثم أعد المحاولة";
+  return "فشل الرفع من يوتيوب (رمز "+status+") — أعد المحاولة بعد قليل";
+}
+function ytStartSession(token, meta, blob){
+  return fetch("https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status", {
+    method:"POST",
+    headers:{
+      "Authorization":"Bearer "+token,
+      "Content-Type":"application/json; charset=UTF-8",
+      "X-Upload-Content-Type":blob.type||"video/webm",
+      "X-Upload-Content-Length":String(blob.size)
+    },
+    body:JSON.stringify(meta)
+  }).then(function(r){
+    if(r.status===401){ var e=new Error("انتهت جلسة تسجيل الدخول"); e.code=401; throw e; }
+    if(!r.ok) return r.text().then(function(t){ throw new Error(ytErrText(r.status, t)); });
+    var loc=r.headers.get("Location");
+    if(!loc) throw new Error("لم تصلنا جلسة الرفع من يوتيوب — أعد المحاولة");
+    return loc;
+  });
+}
+function ytPutBlob(url, blob, onProg){
+  return new Promise(function(res, rej){
+    var xhr=new XMLHttpRequest();
+    xhr.open("PUT", url, true);
+    xhr.setRequestHeader("Content-Type", blob.type||"video/webm");
+    xhr.upload.onprogress=function(e){ if(e.lengthComputable) onProg(Math.round(e.loaded/e.total*100)); };
+    xhr.onload=function(){
+      if(xhr.status===200 || xhr.status===201){
+        try{ var j=JSON.parse(xhr.responseText); if(j && j.id) return res(j.id); }catch(e){}
+        rej(new Error("اكتمل الرفع لكن لم يصل تأكيد يوتيوب — تحقق من قناتك في YouTube Studio قبل إعادة المحاولة حتى لا يتكرر الفيديو"));
+      } else if(xhr.status===401){
+        var er=new Error("انتهت جلسة تسجيل الدخول"); er.code=401; rej(er);
+      } else {
+        rej(new Error(ytErrText(xhr.status, xhr.responseText||"")));
+      }
+    };
+    xhr.onerror=function(){ rej(new Error("انقطع الاتصال أثناء الرفع — تحقق من الإنترنت ثم أعد المحاولة")); };
+    xhr.send(blob);
+  });
+}
+async function ytPublish(){
+  if(ytBusy) return;
+  if(!S.texts.length){ setStatus($("ytStatus"),"اختر الآية أولًا من خطوة «اختيار الآية»","err"); return; }
+  ytBusy=true;
+  var btn=$("ytBtn"); btn.disabled=true;
+  $("ytDone").hidden=true; $("ytRetryRow").style.display="none";
+  setStatus($("ytStatus"),"","");
+  try{
+    setStatus($("ytStatus"),"جارٍ تسجيل الدخول إلى جوجل…","");
+    var token=await ytGetToken();
+    var rec=await ytEnsureVideo(recSig());
+    setStatus($("ytStatus"),"جارٍ تجهيز جلسة الرفع…","");
+    var meta=ytMetadata();
+    var session;
+    try{
+      session=await ytStartSession(token, meta, rec.blob);
+    }catch(e1){
+      if(e1.code===401){ ytToken=null; ytTokenExp=0; token=await ytGetToken(); session=await ytStartSession(token, meta, rec.blob); }
+      else throw e1;
+    }
+    var setProg=function(p){ $("ytProg").value=p; $("ytPct").textContent=p+"%"; };
+    $("ytWrap").classList.add("show"); setProg(0);
+    var vidId;
+    try{
+      vidId=await ytPutBlob(session, rec.blob, setProg);
+    }catch(e2){
+      if(e2.code===401){
+        ytToken=null; ytTokenExp=0; token=await ytGetToken();
+        session=await ytStartSession(token, meta, rec.blob);
+        setProg(0);
+        vidId=await ytPutBlob(session, rec.blob, setProg);
+      } else throw e2;
+    }
+    $("ytWrap").classList.remove("show");
+    var link="https://youtu.be/"+vidId;
+    $("ytLink").href=link; $("ytLink").textContent=link;
+    $("ytOpen").href=link;
+    $("ytDone").hidden=false;
+    setStatus($("ytStatus"),"تم النشر على يوتيوب بنجاح ✓ — الفيديو الآن «خاص»، واجعله عامًا من تطبيق YouTube Studio متى شئت","ok");
+    toast("تم النشر على يوتيوب ✓");
+  }catch(e){
+    $("ytWrap").classList.remove("show");
+    setStatus($("ytStatus"), (e && e.message) || "حدث خطأ أثناء النشر — أعد المحاولة", "err");
+    $("ytRetryRow").style.display="";
+  }
+  btn.disabled=false; ytBusy=false;
+}
+$("ytBtn").addEventListener("click", ytPublish);
+$("ytRetry").addEventListener("click", ytPublish);
+$("ytCopy").addEventListener("click", async function(){
+  var link=$("ytLink").textContent;
+  try{ await navigator.clipboard.writeText(link); toast("تم نسخ الرابط ✓"); }
+  catch(e){ toast("تعذّر النسخ — انسخ الرابط يدويًا"); }
+});
 /* ================= ربط الواجهة ================= */
 function fillSelects(){
   var lib=$("libSelect");
