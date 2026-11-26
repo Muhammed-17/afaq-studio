@@ -809,7 +809,7 @@
             </div>
             <div class="yt-box">
               <h3 class="yt-h">النشر المباشر على يوتيوب</h3>
-              <p class="note">سيُنشر الفيديو بحالة <b>«خاص»</b> في هذه المرحلة — هذا ما تفرضه جوجل حتى اعتماد مشروع التطبيق رسميًا. بعد الرفع تستطيع جعله <b>عامًا</b> بنقرة واحدة من تطبيق YouTube Studio. وإن لم يكن الفيديو مُسجَّلًا بعد، سيُسجَّل تلقائيًا أولًا ثم يُرفع بنفس العنوان والوصف والهاشتاجات الظاهرة بالأعلى.</p>
+              <p class="note">سيُنشر الفيديو بحالة <b>«علني»</b> بحيث يظهر للجميع فور رفعه. وإن لم يكن الفيديو مُسجَّلًا بعد، سيُسجَّل تلقائيًا أولًا ثم يُرفع بنفس العنوان والوصف والهاشتاجات الظاهرة بالأعلى.</p>
               <div class="btnrow">
                 <button type="button" class="btn gold" id="ytBtn">▶ نشر على يوتيوب</button>
               </div>
@@ -2168,7 +2168,7 @@ function ytMetadata(){
   ["آفاق","قرآن كريم","تلاوة خاشعة"].forEach(function(w){ if(!seen[w]){ seen[w]=1; tags.push(w); } });
   return {
     snippet:{ title:title.slice(0,100), description:desc, tags:tags.slice(0,30), categoryId:"27" },
-    status:{ privacyStatus:"private", selfDeclaredMadeForKids:false }
+    status:{ privacyStatus:"public", selfDeclaredMadeForKids:false }
   };
 }
 function ytErrText(status, body){
@@ -2255,7 +2255,7 @@ async function ytPublish(){
     $("ytLink").href=link; $("ytLink").textContent=link;
     $("ytOpen").href=link;
     $("ytDone").hidden=false;
-    setStatus($("ytStatus"),"تم النشر على يوتيوب بنجاح ✓ — الفيديو الآن «خاص»، واجعله عامًا من تطبيق YouTube Studio متى شئت","ok");
+    setStatus($("ytStatus"),"تم النشر على يوتيوب بنجاح ✓ — الفيديو الآن «علني» ومتاح للجميع","ok");
     toast("تم النشر على يوتيوب ✓");
   }catch(e){
     $("ytWrap").classList.remove("show");
