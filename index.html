@@ -423,9 +423,9 @@
           <a class="yt-btn" href="https://www.youtube.com/channel/UCD0u2xdyUJ6OCgzqO_SQRGQ" target="_blank" rel="noopener"><span class="yt-ic">▶</span> قناة آفاق على يوتيوب</a>
         </div>
         <div class="hstats">
-          <div class="hstat"><b>١٨</b><span>آية جاهزة في المكتبة</span></div>
+          <div class="hstat"><b id="statVerses">٣١</b><span>آية جاهزة في المكتبة</span></div>
           <div class="hstat"><b>٦</b><span>قرّاء بأصوات مميزة</span></div>
-          <div class="hstat"><b>١٧</b><span>خلفية — منها ٥ فيديو حقيقي، أو ارفع خلفيتك</span></div>
+          <div class="hstat"><b id="statBgs">٢٤</b><span>خلفية — منها ٥ فيديو حقيقي، أو ارفع خلفيتك</span></div>
           <div class="hstat"><b dir="ltr">1080×1920</b><span>جودة تصدير الفيديو</span></div>
         </div>
         <ol class="steps2">
@@ -912,6 +912,12 @@ var LIB = [
  {id:"y12", surah:113, from:1, to:5, hook:"سورة الفلق", pl:"تلاوات قرآنية", label:"الفلق كاملة ١–٥"},
  {id:"y13", surah:114, from:1, to:6, hook:"سورة الناس", pl:"تلاوات قرآنية", label:"الناس كاملة ١–٦"}
 ];
+/* أرقام شريط إحصائيات الترويسة: تُحسب فعليًا من المكتبة وشبكة الخلفيات حتى لا تَقدم مع أي إضافة */
+(function(){
+  function arNum(n){ return String(n).replace(/[0-9]/g, function(d){ return "٠١٢٣٤٥٦٧٨٩"[+d]; }); }
+  var sv=document.getElementById("statVerses"); if(sv) sv.textContent=arNum(LIB.length);
+  var sb=document.getElementById("statBgs"); if(sb) sb.textContent=arNum(document.querySelectorAll(".bg-opt").length);
+})();
 var WEEK = [
  {day:"اليوم ١ — السبت", id:"w2"}, {day:"اليوم ٢ — الأحد", id:"w3"}, {day:"اليوم ٣ — الاثنين", id:"w4"},
  {day:"اليوم ٤ — الثلاثاء", id:"w5"}, {day:"اليوم ٥ — الأربعاء", id:"w6"}, {day:"اليوم ٦ — الخميس", id:"w7"},
